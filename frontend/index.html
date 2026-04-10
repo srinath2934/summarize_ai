@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summarize AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 { font-size: 1.8rem; margin-bottom: 8px; color: #fff; }
+        .subtitle { color: #888; margin-bottom: 30px; font-size: 0.9rem; }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #e0e0e0;
+            padding: 14px;
+            font-size: 0.95rem;
+            resize: vertical;
+            outline: none;
+        }
+        textarea:focus { border-color: #4a9eff; }
+
+        button {
+            margin-top: 14px;
+            padding: 12px 28px;
+            background: #4a9eff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button:hover { background: #3a8eef; }
+        button:disabled { background: #333; cursor: not-allowed; }
+
+        #result {
+            margin-top: 30px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            display: none;
+        }
+        .label { color: #888; font-size: 0.8rem; text-transform: uppercase; margin-top: 14px; }
+        .label:first-child { margin-top: 0; }
+        .value { color: #e0e0e0; margin-top: 4px; line-height: 1.5; }
+        .title-val { font-size: 1.2rem; color: #fff; font-weight: 600; }
+
+        .key-points { list-style: none; margin-top: 4px; }
+        .key-points li { padding: 4px 0; padding-left: 16px; position: relative; }
+        .key-points li::before { content: "→"; position: absolute; left: 0; color: #4a9eff; }
+
+        #error { color: #f87171; margin-top: 14px; display: none; }
+        #loading { color: #888; margin-top: 14px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Summarize AI</h1>
+        <p class="subtitle">Paste text below and get a structured summary</p>
+
+        <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+        <button id="btn" onclick="summarize()">Summarize</button>
+
+        <div id="loading">🔄 Summarizing...</div>
+        <div id="error"></div>
+
+        <div id="result">
+            <div class="label">Title</div>
+            <div class="value title-val" id="resTitle"></div>
+
+            <div class="label">Summary</div>
+            <div class="value" id="resSummary"></div>
+
+            <div class="label">Key Points</div>
+            <ul class="key-points" id="resPoints"></ul>
+
+
+        </div>
+    </div>
+
+    <script>
+        async function summarize() {
+            const text = document.getElementById('inputText').value.trim();
+            if (!text) return;
+
+            const btn = document.getElementById('btn');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+
+            // UI state: loading
+            btn.disabled = true;
+            btn.textContent = 'Summarizing...';
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            result.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/summarize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+
+                const json = await res.json();
+
+                if (!res.ok || json.error) {
+                    throw new Error(json.error || 'Something went wrong');
+                }
+
+                const d = json.data;
+
+                // Fill results
+                document.getElementById('resTitle').textContent = d.title;
+                document.getElementById('resSummary').textContent = d.summary;
+
+
+                // Key points
+                const ul = document.getElementById('resPoints');
+                ul.innerHTML = '';
+                d.key_points.forEach(p => {
+                    const li = document.createElement('li');
+                    li.textContent = p;
+                    ul.appendChild(li);
+                });
+
+                result.style.display = 'block';
+
+            } catch (err) {
+                error.textContent = '❌ ' + err.message;
+                error.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Summarize';
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
