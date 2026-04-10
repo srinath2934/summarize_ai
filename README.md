@@ -14,13 +14,11 @@ Built with **LangGraph** · **Groq (Llama 3.3 70B)** · **Pydantic** · **Flask*
 
 <div align="center">
 
-<video src="https://github.com/YOUR_USERNAME/SUMMARIZE-AI/raw/main/assets/demo.mp4" controls autoplay muted loop width="100%">
+<video src="https://github.com/srinath2934/summarize_ai/raw/main/assets/demo.mp4" controls autoplay muted loop width="100%">
   Your browser does not support the video tag.
 </video>
 
 </div>
-
-> ⚠️ **After pushing to GitHub:** Edit the README on GitHub → delete the video tag → drag-drop `assets/demo.mp4` directly into the editor. GitHub will auto-host it and generate a working embed link.
 
 ---
 
