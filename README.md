@@ -14,8 +14,7 @@ Built with **LangGraph** · **Groq (Llama 3.3 70B)** · **Pydantic** · **Flask*
 
 <div align="center">
 
-<video src="https://github.com/srinath2934/summarize_ai/raw/main/assets/demo.mp4" controls autoplay muted loop width="100%">
-  Your browser does not support the video tag.
+<video src="https://raw.githubusercontent.com/srinath2934/summarize_ai/main/assets/demo.mp4" controls autoplay muted loop width="100%">
 </video>
 
 </div>
